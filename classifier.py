@@ -4,7 +4,6 @@ import os
 from abbrev import any_abbrev
 import re
 
-#teste
 
 def product_matches(source1, source2):
     source1_path = os.path.join("data", source1)
