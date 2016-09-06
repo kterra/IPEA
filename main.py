@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # for fname in all_filenames:
     #    pre_processing_table(fname,"SAMMED",8,7,6,3)
 
-    product_matches(SOURCE_PMB, SOURCE_SAMMED)
+    #product_matches(SOURCE_PMB, SOURCE_SAMMED)
 
 
     print("Finished.")
