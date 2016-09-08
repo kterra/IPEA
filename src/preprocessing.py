@@ -114,3 +114,20 @@ def pre_processing_table(table_name, table_given_name, column_pres, column_prod,
         with open(os.path.join(lab_dir_name, prod_initial + '.csv'), 'a') as prod_initial_file:
             prod_initial_file.write("{}, {}, {}, {}, {}, {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,lab_name))
     print("Table Finished.")
+
+
+# Regex
+# (\s*\d+\s*M*G)|(\d+)|(\d+\s*ML) |X*\s*(\d+\s*[ML]*)
+#
+# Test Cases
+# 750 MG PÓ SOL INJ CT FA VD INC + 1 AMP DIL VD INC X 6 ML
+# CEFUROXIMA SOD.MG F.AMP 750 MG 6 ML x 1
+#
+# 1 G COM REV CT BL AL PLAS INC X 30
+# CLOR.METFORMINA MG CPR REVEST 1 G x 30
+#
+# 1G PÓ P/ SOL INJ CT FA VD INC + DIL AMP PLAS INC X 10 ML
+# CEFALOTINA SODI.MG F.AMP C/DILU 1 G 10 ML x 1
+#
+# 1G PÓ P/ SOL INJ CT 50 FA VD INC + 50 DIL AMP PLAS INC  X 10 ML (EMB HOSP)
+# CEFALOTINA SODI.MG F.AMP C/DILU 1 G 10 ML x 50
