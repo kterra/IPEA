@@ -116,5 +116,55 @@ def find_possible_matches(meds1, meds2):
 
     print("Matches saved.")
 
-def find_matches():
+def find_matches_by_pres():
+    matches_file = open(os.path.join(os.path.join("data", "matches"), "matches.csv"), 'r')
+
+    possible_matches = []
+    line = matches_file.readline()
+    while(line != ''):
+        possible_matches.append(line.split(','))
+        line = matches_file.readline()
+
+    matches_file.close()
+    possible_matches = list(set(map(tuple, possible_matches)))
+    for match in possible_matches:
+        med1_pres = match[PM_PROD_PRES_INDEX_1]
+        med1_pres_units = check_digits_pattern(med1_pres)
+        med2_pres = match[PM_PROD_PRES_INDEX_2]
+        med2_pres_units = check_digits_pattern(med2_pres)
+
     pass
+
+def check_digits_pattern(med_pres):
+    regex = r"(\s?\d+\s?M?G)|X?\s?(\d+\s?M?L?)"
+    pms = re.findall(regex, med_pres,flags=re.IGNORECASE)
+    results = []
+    for item in pms:
+        if item[0]:
+            results.append(item[0])
+        if item[1]:
+            results.append(item[1])
+    print(sorted(results))
+
+def compare_lists(list1, list2):
+    
+    pass
+
+
+# Regex
+# option 1: (\s*\d+\s*M*G)|(\d+)|(\d+\s*ML) |X*\s*(\d+\s*[ML]*)
+# option 2: (\s?\d+\s?M?G)|X?\s?(\d+\s?M?L?)|(/M?L)
+# option 3: (\s?\d+\s?M?G)|X?\s?(\d+\s?M?L?)
+#
+# Test Cases
+# 750 MG PÓ SOL INJ CT FA VD INC + 1 AMP DIL VD INC X 6 ML
+# CEFUROXIMA SOD.MG F.AMP 750 MG 6 ML x 1
+#
+# 1 G COM REV CT BL AL PLAS INC X 30
+# CLOR.METFORMINA MG CPR REVEST 1 G x 30
+#
+# 1G PÓ P/ SOL INJ CT FA VD INC + DIL AMP PLAS INC X 10 ML
+# CEFALOTINA SODI.MG F.AMP C/DILU 1 G 10 ML x 1
+#
+# 1G PÓ P/ SOL INJ CT 50 FA VD INC + 50 DIL AMP PLAS INC  X 10 ML (EMB HOSP)
+# CEFALOTINA SODI.MG F.AMP C/DILU 1 G 10 ML x 50

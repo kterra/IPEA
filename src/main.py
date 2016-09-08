@@ -18,5 +18,6 @@ if __name__ == '__main__':
 
     #product_matches(SOURCE_PMB, SOURCE_SAMMED)
 
+    check_digits_pattern("750 MG PÓ SOL INJ CT FA VD INC + 1 AMP DIL VD INC X 6 ML")
 
     print("Finished.")
