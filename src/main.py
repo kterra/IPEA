@@ -16,8 +16,10 @@ if __name__ == '__main__':
     # for fname in all_filenames:
     #    pre_processing_table(fname,"SAMMED",8,7,6,3)
 
-    #product_matches(SOURCE_PMB, SOURCE_SAMMED)
+    product_matches(SOURCE_PMB, SOURCE_SAMMED)
+    prsentation_matches()
 
-    check_digits_pattern("750 MG PÓ SOL INJ CT FA VD INC + 1 AMP DIL VD INC X 6 ML")
+    # check_digits_pattern("CPR 40 MG x 10")
+    # check_digits_pattern("40 MG COM REVEST CT 3 BL AL PLAS INC X 10")
 
     print("Finished.")

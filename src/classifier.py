@@ -23,8 +23,8 @@ def product_matches(source1, source2):
             for filename in files_src1:
                 if filename in files_src2:
                     print("Start reading files... " + filename)
-                    f1 = open(os.path.join(os.path.join(source1_path, lab), filename), 'r')
-                    f2 = open(os.path.join(os.path.join(source2_path, lab), filename), 'r')
+                    f1 = open(os.path.join(os.path.join(source1_path, lab), filename), 'r',encoding='iso-8859-1')
+                    f2 = open(os.path.join(os.path.join(source2_path, lab), filename), 'r',encoding='iso-8859-1')
 
                     meds1 = []
                     line = f1.readline()
@@ -94,8 +94,15 @@ def find_possible_matches(meds1, meds2):
                 else:
                     no_matches[prod1_initial] = [med]
 
-    print(str(len(no_matches.values())) + " no matches found.")
+    print( str(len(no_matches.values())) + " no matches found.")
     print(str(len(matches)) + " matches found.")
+
+
+    with open(os.path.join("log", 'no_matches_stats.csv'), 'a') as stats_file:
+        stats_file.write("{}\n".format(len(no_matches.values())))
+    with open(os.path.join("log", 'matches_stats.csv'), 'a') as stats_file:
+        stats_file.write("{}\n".format(len(matches)))
+
 
     for key in no_matches.keys():
         with open(os.path.join("no_matches", key + '.csv'), 'a') as no_matches_file:
@@ -116,8 +123,8 @@ def find_possible_matches(meds1, meds2):
 
     print("Matches saved.")
 
-def find_matches_by_pres():
-    matches_file = open(os.path.join(os.path.join("data", "matches"), "matches.csv"), 'r')
+def prsentation_matches():
+    matches_file = open(os.path.join( "matches", "matches.csv"), 'r')
 
     possible_matches = []
     line = matches_file.readline()
@@ -127,28 +134,79 @@ def find_matches_by_pres():
 
     matches_file.close()
     possible_matches = list(set(map(tuple, possible_matches)))
+
+    matches = []
+    no_matches = []
     for match in possible_matches:
         med1_pres = match[PM_PROD_PRES_INDEX_1]
         med1_pres_units = check_digits_pattern(med1_pres)
         med2_pres = match[PM_PROD_PRES_INDEX_2]
         med2_pres_units = check_digits_pattern(med2_pres)
+        if compare_lists(med1_pres_units, med2_pres_units):
+            matches.append(match)
+        else:
+            no_matches.append(match)
+    with open(os.path.join("matches", 'matches_pres.csv'), 'a') as matches_file:
+        for match in matches:
+            last_item = len(match) - 1
+            for item in match[:last_item]:
+                matches_file.write("{},".format(item))
+            matches_file.write("{}".format(match[last_item]))
+    print("Matches by Pres saved.")
 
-    pass
+    with open(os.path.join("no_matches", 'no_matches_pres.csv'), 'a') as no_matches_file:
+        for match in no_matches:
+            last_item = len(match) - 1
+            for item in match[:last_item]:
+                no_matches_file.write("{},".format(item))
+            no_matches_file.write("{}".format(match[last_item]))
+    print("No Matches by Pres saved.")
 
 def check_digits_pattern(med_pres):
-    regex = r"(\s?\d+\s?M?G)|X?\s?(\d+\s?M?L?)"
-    pms = re.findall(regex, med_pres,flags=re.IGNORECASE)
+    regex = r"\s?(\d+\.\d*)\s?M?G|x?X?\s?(\d+)\s?M?G|x?X?\s?(\d+)\s?M?L|CT.?C?/?.?(\d+)|x?X?\s?1$|x?X?\s?(\d+)"
+    pms = re.findall(regex, med_pres)
+    #print(med_pres)
     results = []
-    for item in pms:
-        if item[0]:
-            results.append(item[0])
-        if item[1]:
-            results.append(item[1])
-    print(sorted(results))
+    item3 = None
+    item4 = None
+    for ix in range(len(pms)):
+        item = pms[ix]
+        # print(item)
+        for i in range(3):
+            if item[i]:
+                results.append(item[i])
+        if item[3]:
+            item3 = item[3]
+            # print(item3)
+        if item[4]:
+            item4 = item[4]
+            # print(item4)
+
+    if item3:
+        if item4:
+            results.append(str(int(item3)*int(item4)))
+        else:
+            results.append(item3)
+    else:
+        if item4:
+            results.append(item4)
+
+
+    # print(sorted(results))
+    return sorted(results)
 
 def compare_lists(list1, list2):
-    
-    pass
+
+    if list1 and list2:
+        if len(list1) != len(list2):
+            return False
+        else:
+            for ix in range(len(list1)):
+                if list1[ix] != list2[ix]:
+                    return False
+            return True
+    else:
+        return False
 
 
 # Regex
