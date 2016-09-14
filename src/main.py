@@ -19,7 +19,4 @@ if __name__ == '__main__':
     product_matches(SOURCE_PMB, SOURCE_SAMMED)
     prsentation_matches()
 
-    # check_digits_pattern("CPR 40 MG x 10")
-    # check_digits_pattern("40 MG COM REVEST CT 3 BL AL PLAS INC X 10")
-
     print("Finished.")

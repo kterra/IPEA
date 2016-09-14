@@ -163,36 +163,79 @@ def prsentation_matches():
     print("No Matches by Pres saved.")
 
 def check_digits_pattern(med_pres):
-    regex = r"\s?(\d+\.\d*)\s?M?G|x?X?\s?(\d+)\s?M?G|x?X?\s?(\d+)\s?M?L|CT.?C?/?.?(\d+)|x?X?\s?1$|x?X?\s?(\d+)"
-    pms = re.findall(regex, med_pres)
+    regex = r"\s?(\d+)\s?M?G|" +\
+    r"\s?(\d+\.\d*)\s?MG?L?/G?L?|" +\
+    r"\s?(\d+\.\d*)\s?M?G|" +\
+    r"x?X?\s?(\d+)\s?M?G|" + \
+    r"x?X?\s?(\d+)\s?M?L|" +\
+    r"CT\s?C?/?\s?(\d+)|" +\
+    r"\s?(\d+)\s?BLT|" +\
+    r"\s?C/\s?(\d+)|" +\
+    r"X\s?([1-9]\d+|[2-9]$)|" +\
+    r"x?X?\s?1$|" +\
+    r"x?X?\s?1\s|" +\
+    r"[+]\s?\d+|" +\
+    r"\s?(\d+)"
+
+    pms = re.findall(regex, med_pres, flags=re.IGNORECASE)
     #print(med_pres)
     results = []
-    item3 = None
-    item4 = None
+
+    item1 = None
+    item5 = None
+    item6 = None
+    item7 = None
+    item8 = None
     for ix in range(len(pms)):
         item = pms[ix]
-        # print(item)
-        for i in range(3):
-            if item[i]:
-                results.append(item[i])
+        #print(item)
+
+        if item[0]:
+            results.append(item[0])
+        if item[2]:
+            results.append('{0:g}'.format(float(item[2])))
+        if item[1]:
+            item1 = item[1]
         if item[3]:
-            item3 = item[3]
-            # print(item3)
+            results.append(item[3])
         if item[4]:
-            item4 = item[4]
-            # print(item4)
+            results.append(item[4])
+        if item[5]:
+            item5 = item[5]
+        if item[6]:
+            item6 = item[6]
+        if item[7]:
+            item7 = item[7]
+        if item[8]:
+            item8 = item[8]
+        if item[9]:
+            results.append(item[9])
 
-    if item3:
-        if item4:
-            results.append(str(int(item3)*int(item4)))
+    if item1:
+        if item8:
+            results.append('{0:g}'.format(float(item1)*int(item8)))
         else:
-            results.append(item3)
+            results.append(item1)
     else:
-        if item4:
-            results.append(item4)
+        if item6:
+            if item7:
+                results.append(str(int(item6)*int(item7)))
+            else:
+                results.append(item6)
+        else:
+            if item7:
+                results.append(item7)
 
+        if item5:
+            if item8:
+                results.append(str(int(item5)*int(item8)))
+            else:
+                results.append(item5)
+        else:
+            if item8:
+                results.append(item8)
 
-    # print(sorted(results))
+    #print(sorted(results))
     return sorted(results)
 
 def compare_lists(list1, list2):
@@ -207,22 +250,3 @@ def compare_lists(list1, list2):
             return True
     else:
         return False
-
-
-# Regex
-# option 1: (\s*\d+\s*M*G)|(\d+)|(\d+\s*ML) |X*\s*(\d+\s*[ML]*)
-# option 2: (\s?\d+\s?M?G)|X?\s?(\d+\s?M?L?)|(/M?L)
-# option 3: (\s?\d+\s?M?G)|X?\s?(\d+\s?M?L?)
-#
-# Test Cases
-# 750 MG PÓ SOL INJ CT FA VD INC + 1 AMP DIL VD INC X 6 ML
-# CEFUROXIMA SOD.MG F.AMP 750 MG 6 ML x 1
-#
-# 1 G COM REV CT BL AL PLAS INC X 30
-# CLOR.METFORMINA MG CPR REVEST 1 G x 30
-#
-# 1G PÓ P/ SOL INJ CT FA VD INC + DIL AMP PLAS INC X 10 ML
-# CEFALOTINA SODI.MG F.AMP C/DILU 1 G 10 ML x 1
-#
-# 1G PÓ P/ SOL INJ CT 50 FA VD INC + 50 DIL AMP PLAS INC  X 10 ML (EMB HOSP)
-# CEFALOTINA SODI.MG F.AMP C/DILU 1 G 10 ML x 50
