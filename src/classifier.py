@@ -118,12 +118,14 @@ def find_possible_matches(drugs1, drugs2):
             current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab]
 
             #Get drug's attributes for possible match drug
-            drug2_code = possible_match[PROD_CODE_INDEX]
-            drug2_name = possible_match[PROD_NAME_FORMATTED_INDEX]
-            drug2_complete_name = possible_match[PROD_NAME_COMPLETE_INDEX]
-            drug2_pres = possible_match[PROD_PRES_INDEX]
-            drug2_lab = re.sub("\n", "", possible_match[PROD_LAB_INDEX])
-
+            try:
+                drug2_code = possible_match[PROD_CODE_INDEX]
+                drug2_name = possible_match[PROD_NAME_FORMATTED_INDEX]
+                drug2_complete_name = possible_match[PROD_NAME_COMPLETE_INDEX]
+                drug2_pres = possible_match[PROD_PRES_INDEX]
+                drug2_lab = re.sub("\n", "", possible_match[PROD_LAB_INDEX])
+            except:
+                print(possible_match)
             #Check macth by drugs' names by calling any_abbrev utility method
             if drug1_complete_name != NOT_FOUND and drug2_complete_name != NOT_FOUND:
                 if any_abbrev(drug1_name, drug2_name):
@@ -142,7 +144,7 @@ def find_possible_matches(drugs1, drugs2):
             else:
                 if drug1_initial in no_matches.keys():
                     current = no_matches[drug1_initial]
-                    current.append(med)
+                    current.append(drug)
                     no_matches[drug1_initial] = current
                 else:
                     no_matches[drug1_initial] = [drug]
