@@ -7,16 +7,27 @@ SOURCE_SAMMED = "SAMMED"
 
 
 if __name__ == '__main__':
+    """ Starts the programs.
+    Pre-processing and Classifier are called here.
+    Log and results will be stored on files.
+    """
+
     print("Start...")
 
+    #Processing DCB table to get complete products names
     # load_dcb_table_into_memory()
+
+    #Pre processing of labs tables
     # pre_processing_table("FAT_QTD_PMB_PPP_0310_0215_999_FORMATADA.XLS","PMB", 1,2,3,4)
     # all_filenames = os.listdir("raw")
     # all_filenames = [filename for filename in all_filenames if filename.startswith("rel_LISTA_REVISTA_SAMMED")]
     # for fname in all_filenames:
     #    pre_processing_table(fname,"SAMMED",8,7,6,3)
 
-    product_matches(SOURCE_PMB, SOURCE_SAMMED)
-    prsentation_matches()
+    #Search drug macthes by drugs' names
+    search_drugs_names_matches(SOURCE_PMB, SOURCE_SAMMED)
+    
+    #Search drug macthes by presentation description
+    search_drugs_presentation_matches()
 
     print("Finished.")

@@ -1,31 +1,14 @@
+from utils import *
+
 import pandas as pd
 import os
 import math
 import re
 from unidecode import unidecode
-from abbrev import is_abbrev
-from constants import *
 
-
-def pre_processing_dcb_table():
-    print("Start Processing DCB... ")
-    df_dcb = pd.read_excel(os.path.join("raw", "DCB_lista_completa_atualizada_em_março_2016.xlsx"))
-
-    dcb_dir_name = os.path.join("data", "DCB")
-    if not os.path.exists(dcb_dir_name):
-        os.makedirs(dcb_dir_name)
-
-    for index in range(len(df_dcb)):
-        prod_complete_name = df_dcb.iloc[index,1].upper()
-        prod_complete_name_formatted = ' '.join([unidecode(word) for word in prod_complete_name.split() if word not in STOPWORDS])
-        prod_initials = prod_complete_name_formatted[0] + prod_complete_name_formatted[1]
-
-        with open(os.path.join(dcb_dir_name, prod_initials + '.csv'), 'a') as prod_initial_file:
-            prod_initial_file.write("{}, {}\n".format(prod_complete_name, prod_complete_name_formatted))
-
-    print("DCB Finished.")
 
 def load_dcb_table_into_memory():
+    """ Read dcb table and load into list """
     global meds_list_of_names
     meds_list_of_names = []
 
@@ -40,25 +23,15 @@ def load_dcb_table_into_memory():
 
     print("Finished.")
 
-def less_than(s1,s2):
-    words_string1 = s1.split()
-    words_string2 = s2.split()
-    rank = min(len(words_string1),len(words_string2))
-    for i in range(rank):
-        if words_string1[i] in words_string2[i]:
-            if i < rank - 1:
-                return words_string1[i+1] < words_string2[i+1]
-        else:
-            break
-    return s1 < s2
-
 def check_equal(s1, s2):
+    """ Checks if word are identical or fi one is abbreviation of another """
     if len(s1.split()) == 1 or len(s2.split())==1:
         return s1 == s2
     else:
         return is_abbrev(s1,s2)
 
-def find_in_dcb(nameSearch):
+def search_in_dcb(nameSearch):
+    """ Search drug name in DCB table"""
     global meds_list_of_names
 
     lower_bound = 0
@@ -83,6 +56,7 @@ def find_in_dcb(nameSearch):
 
 
 def pre_processing_table(table_name, table_given_name, column_pres, column_prod, column_lab, column_code):
+    """ Split table in csv files by drug name initial and processes atributtes to eliminate accent and remove stopwords"""
     print("Start Processing... " + table_name)
     df_table = pd.read_excel(os.path.join("raw", table_name))
 
@@ -107,10 +81,30 @@ def pre_processing_table(table_name, table_given_name, column_pres, column_prod,
         prod_name = df_table.iloc[index,prod]
         prod_name_formatted = re.sub("[^\w]", " ", prod_name)
         prod_name_formatted = ' '.join([unidecode(word) for word in prod_name_formatted.split() if word not in STOPWORDS]).upper()
-        prod_name_complete = find_in_dcb(prod_name_formatted)
+        prod_name_complete = search_in_dcb(prod_name_formatted)
         prod_initial = prod_name_formatted[0]
         prod_pres = unidecode(re.sub(",", ".", df_table.iloc[index,pres]))
 
         with open(os.path.join(lab_dir_name, prod_initial + '.csv'), 'a') as prod_initial_file:
             prod_initial_file.write("{}, {}, {}, {}, {}, {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,lab_name))
     print("Table Finished.")
+
+
+
+# def pre_processing_dcb_table():
+#     print("Start Processing DCB... ")
+#     df_dcb = pd.read_excel(os.path.join("raw", "DCB_lista_completa_atualizada_em_março_2016.xlsx"))
+#
+#     dcb_dir_name = os.path.join("data", "DCB")
+#     if not os.path.exists(dcb_dir_name):
+#         os.makedirs(dcb_dir_name)
+#
+#     for index in range(len(df_dcb)):
+#         prod_complete_name = df_dcb.iloc[index,1].upper()
+#         prod_complete_name_formatted = ' '.join([unidecode(word) for word in prod_complete_name.split() if word not in STOPWORDS])
+#         prod_initials = prod_complete_name_formatted[0] + prod_complete_name_formatted[1]
+#
+#         with open(os.path.join(dcb_dir_name, prod_initials + '.csv'), 'a') as prod_initial_file:
+#             prod_initial_file.write("{}, {}\n".format(prod_complete_name, prod_complete_name_formatted))
+#
+#     print("DCB Finished.")
