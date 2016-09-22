@@ -117,6 +117,7 @@ def check_digits_pattern(drug_pres):
     pms = re.findall(regex, drug_pres, flags=re.IGNORECASE)
     #print(med_pres)
     results = []
+    units = []
 
     item1 = None
     item5 = None
