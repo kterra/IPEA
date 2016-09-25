@@ -5,13 +5,14 @@ class Tokenizer:
 
     def __init__(self, text):
         self.text = text
+        print(self.text)
         self.text_size = len(text)
         self.text_current_index = -1
         self.keywords = ['MG','G','ML','L','CT', 'CX','BLT' 'X']
 
     def get_next_character(self):
         self.text_current_index += 1
-        print(self.text[self.text_current_index])
+        #print(self.text[self.text_current_index])
         return self.text[self.text_current_index]
 
     def peek_next_character(self, peek_unit):
@@ -90,7 +91,7 @@ class Tokenizer:
 
         value = value.upper()
         if value in self.keywords:
-            return (value, value)
+            return ("KEYWORD", value)
 
         return ("STRING", value)
 
@@ -108,8 +109,8 @@ class Tokenizer:
 
     def tokenize(self):
         tokens = []
-        while self.text_current_index < self.text_size:
-            print(self.text_current_index)
+        while self.text_current_index < self.text_size - 1:
+            #print("{} {}".format(self.text_current_index,self.text_size))
             if self.peek_next_character(1).isspace():
                 self.get_next_character()
             else:
