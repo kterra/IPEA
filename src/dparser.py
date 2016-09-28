@@ -103,11 +103,13 @@ class Parser:
         current_token = 0
 
 
-        if current_token + 1 < number_of_tokens and tokenized_sentence[current_token][0] == "NUMBER":
+        if current_token < number_of_tokens and tokenized_sentence[current_token][0] == "NUMBER":
             CONC += tokenized_sentence[current_token][1]
             current_token +=1
-            CONC += tokenized_sentence[current_token][1]
-            current_token +=1
+
+            if current_token < number_of_tokens and tokenized_sentence[current_token][0] == "UNIT":
+                CONC += tokenized_sentence[current_token][1]
+                current_token +=1
 
             if current_token < number_of_tokens and tokenized_sentence[current_token][0] == "SLASH":
                     CONC += tokenized_sentence[current_token][1]
@@ -133,8 +135,9 @@ class Parser:
                         if current_token + 1 < number_of_tokens and tokenized_sentence[current_token][0] == "NUMBER" :
                             VOL += tokenized_sentence[current_token][1]
                             current_token +=1
-                            VOL += tokenized_sentence[current_token][1]
-                            current_token +=1
+                            if current_token < number_of_tokens and tokenized_sentence[current_token][0] == "UNIT":
+                                VOL += tokenized_sentence[current_token][1]
+                                current_token +=1
                         while  current_token < number_of_tokens and tokenized_sentence[current_token][0] == "STRING":
                             INFO += tokenized_sentence[current_token][1] + " "
                             current_token +=1
@@ -142,8 +145,9 @@ class Parser:
                             current_token +=1
                             VOL += tokenized_sentence[current_token][1]
                             current_token +=1
-                            VOL += tokenized_sentence[current_token][1]
-                            current_token +=1
+                            if current_token < number_of_tokens and tokenized_sentence[current_token][0] == "UNIT":
+                                VOL += tokenized_sentence[current_token][1]
+                                current_token +=1
                         if current_token + 1 < number_of_tokens and tokenized_sentence[current_token][0] == "KEYWORD" :
                             current_token +=1
                             VOL += tokenized_sentence[current_token][1]
@@ -184,10 +188,11 @@ class Parser:
                         FF += tokenized_sentence[current_token][1] + " "
                         current_token +=1
 
-        else:
+        elif current_token < number_of_tokens and tokenized_sentence[current_token][0] == "STRING":
             # S -> FF CONC1 KEYWORD NUMBER INFO$
             # S -> FF C/ CONC1$
             # S -> FF KEYWORD CONC1$
+            # S -> KEYWORD KEYWORD CONC1$
             pass
 
         if FF != "":
