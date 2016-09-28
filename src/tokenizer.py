@@ -40,7 +40,7 @@ class Tokenizer:
         elif self.peek_next_character(1) == 'C' and self.peek_next_character(2) == '/':
             value += self.get_next_character()
             value += self.get_next_character()
-            return (value, value)
+            return ("KEYWORD", value)
 
         elif self.peek_next_character(1) == 'P' and self.peek_next_character(2) == '/':
             value += self.get_next_character()
@@ -89,7 +89,7 @@ class Tokenizer:
 
     def tokenize(self):
         print(self.text)
-        
+        print("\n")
         tokens = []
         while self.text_current_index < self.text_size - 1:
             #print("{} {}".format(self.text_current_index,self.text_size))
@@ -99,4 +99,5 @@ class Tokenizer:
                 token = self.next_token()
                 #print(token)
                 tokens.append(token)
+        print(tokens)
         return tokens
