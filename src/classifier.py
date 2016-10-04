@@ -62,44 +62,44 @@ def search_drugs_names_matches(source1, source2):
                     print("Process finished for files... " + filename)
 
     #Comparing drugs in folder no_matches with all_labs
-    for lab in labs_src2:
-        files_src1 = os.listdir("no_matches")
-        files_src2 = os.listdir(os.path.join(source2_path, lab))
-
-        for filename in files_src1:
-            if filename in files_src2:
-                print("Start reading files... " + filename)
-                #Open files of corresponding lab
-                f1 = open(os.path.join("no_matches", filename), 'r',encoding='iso-8859-1')
-                f2 = open(os.path.join(os.path.join(source2_path, lab), filename), 'r',encoding='iso-8859-1')
-
-                #Read file 1 into list drugs1
-                drugs1 = []
-                line = f1.readline()
-                while(line != ''):
-                    drugs1.append(line.split(','))
-                    line = f1.readline()
-
-                #Read file 2 into list drugs2
-                drugs2 = []
-                line = f2.readline()
-                while(line != ''):
-                    drugs2.append(line.split(','))
-                    line = f2.readline()
-
-                #Close files
-                f1.close()
-                f2.close()
-                print("Files read.")
-
-                #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
-                drugs1 = list(set(map(tuple, drugs1)))
-                drugs2 = list(set(map(tuple, drugs2)))
-
-                print("Trying to find matches for files... " + filename)
-                #Call find_possible_matches to search drugs' matches by drug names
-                find_possible_matches(drugs1, drugs2)
-                print("Process finished for files... " + filename)
+    # for lab in labs_src2:
+    #     files_src1 = os.listdir("no_matches")
+    #     files_src2 = os.listdir(os.path.join(source2_path, lab))
+    #
+    #     for filename in files_src1:
+    #         if filename in files_src2:
+    #             print("Start reading files... " + filename)
+    #             #Open files of corresponding lab
+    #             f1 = open(os.path.join("no_matches", filename), 'r',encoding='iso-8859-1')
+    #             f2 = open(os.path.join(os.path.join(source2_path, lab), filename), 'r',encoding='iso-8859-1')
+    #
+    #             #Read file 1 into list drugs1
+    #             drugs1 = []
+    #             line = f1.readline()
+    #             while(line != ''):
+    #                 drugs1.append(line.split(','))
+    #                 line = f1.readline()
+    #
+    #             #Read file 2 into list drugs2
+    #             drugs2 = []
+    #             line = f2.readline()
+    #             while(line != ''):
+    #                 drugs2.append(line.split(','))
+    #                 line = f2.readline()
+    #
+    #             #Close files
+    #             f1.close()
+    #             f2.close()
+    #             print("Files read.")
+    #
+    #             #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
+    #             drugs1 = list(set(map(tuple, drugs1)))
+    #             drugs2 = list(set(map(tuple, drugs2)))
+    #
+    #             print("Trying to find matches for files... " + filename)
+    #             #Call find_possible_matches to search drugs' matches by drug names
+    #             find_possible_matches(drugs1, drugs2)
+    #             print("Process finished for files... " + filename)
 
     #Comparing drugs in folder NO_ACR in source2(SAMMED) with all labs in source1(PMB)
     for lab in labs_src1:
