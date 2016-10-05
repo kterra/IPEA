@@ -25,9 +25,11 @@ if __name__ == '__main__':
     #    pre_processing_table(fname,"SAMMED",8,7,6,3)
 
     #Search drug macthes by drugs' names
-    search_drugs_names_matches(SOURCE_PMB, SOURCE_SAMMED)
-    
+    #search_drugs_names_matches(SOURCE_PMB, SOURCE_SAMMED)
+
     #Search drug macthes by presentation description
-    search_drugs_presentation_matches()
+    #search_drugs_presentation_matches()
+
+    classify_de_para_ims_sammed()
 
     print("Finished.")

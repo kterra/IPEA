@@ -2,6 +2,7 @@ from utils import *
 import pandas as pd
 import os
 import re
+from unidecode import unidecode
 
 #The functions in this file will be used to search for drugs matches
 
@@ -272,3 +273,75 @@ def search_drugs_presentation_matches():
                 no_matches_file.write("{},".format(item))
             no_matches_file.write("{}".format(match[last_item]))
     print("No Matches by Pres saved.")
+
+
+def classify_de_para_ims_sammed():
+
+    df_de_para_ims_sammed = pd.read_excel(os.path.join("raw", "De_Para_IMS_SAMMED_FORMATADA.xlsx"))
+
+    lab1_column = df_de_para_ims_sammed.columns[0]
+    prod1_name_column = df_de_para_ims_sammed.columns[1]
+    apr1_column = df_de_para_ims_sammed.columns[2]
+    cod_ggrem_column = df_de_para_ims_sammed.columns[3]
+    valido_column = df_de_para_ims_sammed.columns[4]
+    expr1007_column = df_de_para_ims_sammed.columns[5]
+    cod_pro_column = df_de_para_ims_sammed.columns[6]
+    cod_ims_column = df_de_para_ims_sammed.columns[7]
+    cod_fcc_column = df_de_para_ims_sammed.columns[8]
+    lab2_column = df_de_para_ims_sammed.columns[9]
+    prod2_name_column = df_de_para_ims_sammed.columns[10]
+    apr2_column = df_de_para_ims_sammed.columns[11]
+    qtd13_column = df_de_para_ims_sammed.columns[12]
+    fat13_column = df_de_para_ims_sammed.columns[13]
+
+    no_matches = []
+    matches = []
+
+    for ix in range(len(df_de_para_ims_sammed[prod1_name_column])):
+
+
+        lab1 = df_de_para_ims_sammed[lab1_column][ix]
+        prod1_name = df_de_para_ims_sammed[prod1_name_column][ix]
+        apr1 = df_de_para_ims_sammed[apr1_column][ix]
+        cod_ggrem = df_de_para_ims_sammed[cod_ggrem_column][ix]
+        valido = df_de_para_ims_sammed[valido_column][ix]
+        expr1007 = df_de_para_ims_sammed[expr1007_column][ix]
+        cod_pro = df_de_para_ims_sammed[cod_pro_column][ix]
+        cod_ims = df_de_para_ims_sammed[cod_ims_column][ix]
+        cod_fcc = df_de_para_ims_sammed[cod_fcc_column][ix]
+        lab2 = df_de_para_ims_sammed[lab2_column][ix]
+        prod2_name = df_de_para_ims_sammed[prod2_name_column][ix]
+        apr2 =  df_de_para_ims_sammed[apr2_column][ix]
+        qtd13 =  df_de_para_ims_sammed[qtd13_column][ix]
+        fat13 =  df_de_para_ims_sammed[fat13_column][ix]
+
+        current_matches = [lab1, prod1_name, apr1, cod_ggrem, valido, expr1007, cod_pro, cod_ims]
+
+        #Check macth by drugs' names by calling any_abbrev utility method or comparing if drugs' names are identical
+        if any_abbrev(prod1_name, prod2_name) or prod1_name ==  prod2_name:
+            current_matches = current_matches + [cod_fcc, lab2, prod2_name, apr2, qtd13, fat13]
+
+        if len(current_matches) > 8:
+            matches.append(current_matches)
+        else:
+            no_matches.append(current_matches)
+
+    #Store attributes of drugs that matched by name
+    with open(os.path.join("matches", 'matches_de_para_ims_sammed.csv'), 'a') as matches_file:
+        for match in matches:
+            last_item = len(match) - 1
+            for item in match[:last_item]:
+                matches_file.write("\"{}\",".format(item))
+            matches_file.write("\"{}\"\n".format(match[last_item]))
+
+    print("Matches saved.")
+
+    #Store attributes of drugs that matched by name
+    with open(os.path.join("no_matches", 'no_matches_de_para_ims_sammed.csv'), 'a') as no_matches_file:
+        for match in no_matches:
+            last_item = len(match) - 1
+            for item in match[:last_item]:
+                no_matches_file.write("\"{}\",".format(item))
+            no_matches_file.write("\"{}\"\n".format(match[last_item]))
+
+    print("No Matches saved.")
