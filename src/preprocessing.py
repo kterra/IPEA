@@ -13,7 +13,7 @@ def load_dcb_table_into_memory():
     meds_list_of_names = []
 
     print("Start Loading DCB... ")
-    df_dcb = pd.read_excel(os.path.join("raw", "DCB_lista_completa_atualizada_em_março_2016.xlsx"))
+    df_dcb = pd.read_excel(os.path.join("raw", "DCB_lista_completa_atualizada_em_marco_2016.xlsx"))
     med_column = df_dcb.columns[1]
 
     m_list_of_names = [re.sub('[\(\)\{\}\[\]<>]', '',unidecode(item).strip()).upper() for item in df_dcb[med_column]]
@@ -71,7 +71,9 @@ def pre_processing_table(table_name, table_given_name, column_pres, column_prod,
         if lab_name == EMPTY_NAME or lab_name != lab_name:
             lab_name = NO_ACRONYMN
 
+        print(lab_name)
         lab_name = lab_name.upper()
+
 
         lab_dir_name = os.path.join(os.path.join("data", table_given_name), lab_name)
 
