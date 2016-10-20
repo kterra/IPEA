@@ -45,7 +45,7 @@ def search_in_dcb(nameSearch):
             found_name = meds_list_of_names[middle_pos]
             found = True
             with open(os.path.join("log", 'check_meds_names.csv'), 'a') as check_meds_names_file:
-                check_meds_names_file.write("{}, {}\n".format(nameSearch, found_name))
+                check_meds_names_file.write("{}; {}\n".format(nameSearch, found_name))
         elif less_than(nameSearch, meds_list_of_names[middle_pos]):
             upper_bound = middle_pos - 1
         else:
@@ -71,7 +71,7 @@ def pre_processing_table(table_name, table_given_name, column_pres, column_prod,
         if lab_name == EMPTY_NAME or lab_name != lab_name:
             lab_name = NO_ACRONYMN
 
-        print(lab_name)
+        #print(lab_name)
         lab_name = lab_name.upper()
 
 
@@ -88,7 +88,7 @@ def pre_processing_table(table_name, table_given_name, column_pres, column_prod,
         prod_pres = unidecode(re.sub(",", ".", df_table.iloc[index,pres]))
 
         with open(os.path.join(lab_dir_name, prod_initial + '.csv'), 'a') as prod_initial_file:
-            prod_initial_file.write("{}, {}, {}, {}, {}, {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,lab_name))
+            prod_initial_file.write("{}; {}; {}; {}; {}; {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,lab_name))
     print("Table Finished.")
 
 

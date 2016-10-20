@@ -38,14 +38,14 @@ def search_drugs_names_matches(source1, source2):
                     drugs1 = []
                     line = f1.readline()
                     while(line != ''):
-                        drugs1.append(line.split(','))
+                        drugs1.append(line.split(';'))
                         line = f1.readline()
 
                     #Read file 2 into list drugs2
                     drugs2 = []
                     line = f2.readline()
                     while(line != ''):
-                        drugs2.append(line.split(','))
+                        drugs2.append(line.split(';'))
                         line = f2.readline()
 
                     #Close files
@@ -118,14 +118,14 @@ def search_drugs_names_matches(source1, source2):
                 drugs1 = []
                 line = f1.readline()
                 while(line != ''):
-                    drugs1.append(line.split(','))
+                    drugs1.append(line.split(';'))
                     line = f1.readline()
 
                 #Read file 2 into list drugs2
                 drugs2 = []
                 line = f2.readline()
                 while(line != ''):
-                    drugs2.append(line.split(','))
+                    drugs2.append(line.split(';'))
                     line = f2.readline()
 
                 #Close files
@@ -157,7 +157,7 @@ def find_possible_matches(drugs1, drugs2):
             drug1_name = drug[PROD_NAME_FORMATTED_INDEX]
             drug1_initial = drug1_name.strip()[0]
             drug1_complete_name = drug[PROD_NAME_COMPLETE_INDEX]
-            drug1_pres = drug[PROD_PRES_INDEX]
+            drug1_pres =  re.sub("\n", "",drug[PROD_PRES_INDEX])
             drug1_lab = re.sub("\n", "", drug[PROD_LAB_INDEX])
 
             for possible_match in drugs2:
@@ -168,7 +168,7 @@ def find_possible_matches(drugs1, drugs2):
                     drug2_code = possible_match[PROD_CODE_INDEX]
                     drug2_name = possible_match[PROD_NAME_FORMATTED_INDEX]
                     drug2_complete_name = possible_match[PROD_NAME_COMPLETE_INDEX]
-                    drug2_pres = possible_match[PROD_PRES_INDEX]
+                    drug2_pres =  re.sub("\n", "",possible_match[PROD_PRES_INDEX])
                     drug2_lab = re.sub("\n", "", possible_match[PROD_LAB_INDEX])
                 except:
                     print(possible_match)
@@ -213,7 +213,7 @@ def find_possible_matches(drugs1, drugs2):
                 no_match = list(no_match)
                 last_item = len(no_match) - 1
                 for item in no_match[:last_item]:
-                    no_matches_file.write("{},".format(item))
+                    no_matches_file.write("{};".format(item))
                 no_matches_file.write("{}\n".format(no_match[last_item]))
     print("No matches saved.")
 
@@ -222,7 +222,7 @@ def find_possible_matches(drugs1, drugs2):
         for match in matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
-                matches_file.write("{},".format(item))
+                matches_file.write("{};".format(item))
             matches_file.write("{}\n".format(match[last_item]))
 
     print("Matches saved.")
@@ -235,7 +235,7 @@ def search_drugs_presentation_matches():
     possible_matches = []
     line = matches_file.readline()
     while(line != ''):
-        possible_matches.append(line.split(','))
+        possible_matches.append(line.split(';'))
         line = matches_file.readline()
     matches_file.close()
 
@@ -247,21 +247,24 @@ def search_drugs_presentation_matches():
 
     #Get possible matches by name, check their digits patterns using utility method called check_digits_pattern and compare results
     for match in possible_matches:
-        drug1_pres = match[PM_PROD_PRES_INDEX_1]
-        drug1_pres_units = check_digits_pattern(drug1_pres)
-        drug2_pres = match[PM_PROD_PRES_INDEX_2]
-        drug2_pres_units = check_digits_pattern(drug2_pres)
-        if compare_lists(drug1_pres_units, drug2_pres_units):
-            matches.append(match)
-        else:
-            no_matches.append(match)
+        try:
+            drug1_pres = match[PM_PROD_PRES_INDEX_1]
+            drug1_pres_units = check_digits_pattern(drug1_pres)
+            drug2_pres = match[PM_PROD_PRES_INDEX_2]
+            drug2_pres_units = check_digits_pattern(drug2_pres)
+            if compare_lists(drug1_pres_units, drug2_pres_units):
+                matches.append(match)
+            else:
+                no_matches.append(match)
+        except:
+            print(match)
 
     #Store attributes of drugs that matched by presentation description
     with open(os.path.join("matches", 'matches_pres.csv'), 'a') as matches_file:
         for match in matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
-                matches_file.write("{},".format(item))
+                matches_file.write("{};".format(item))
             matches_file.write("{}".format(match[last_item]))
     print("Matches by Pres saved.")
 
@@ -270,7 +273,7 @@ def search_drugs_presentation_matches():
         for match in no_matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
-                no_matches_file.write("{},".format(item))
+                no_matches_file.write("{};".format(item))
             no_matches_file.write("{}".format(match[last_item]))
     print("No Matches by Pres saved.")
 

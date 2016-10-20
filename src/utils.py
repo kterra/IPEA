@@ -75,6 +75,8 @@ def is_abbrev(abbrev, text):
         return True
     if abbrev and not text:
         return False
+    if len(abbrev.split()) != len(text.split()):
+        return False
     if abbrev[0]!=text[0]:
         return False
     else:
