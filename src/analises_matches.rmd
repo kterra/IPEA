@@ -1,0 +1,173 @@
+---
+title: "Analises Macthes"
+author: "Bruno Lucian <br/> Kizzy Terra"
+date: "25 de outubro de 2016"
+output: html_document
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(plyr)
+require(tidyverse)
+require(ggplot2)
+require(ggiraph)
+
+
+cadastro <- read.csv2("raw/dados cadastrais sammed.csv", stringsAsFactors = FALSE)
+matches <- read.csv2("matches/matches_pres.csv", stringsAsFactors = FALSE)
+PMB <- read.csv2("raw/PMB_2015_02_FORMATADA.csv", stringsAsFactors = FALSE)
+
+```
+
+Número de ggrem encontrado nos matches
+
+```{r, echo=FALSE}
+
+dados <- inner_join(matches, cadastro, by=c("GGREM"="ggrem"))
+dados <- inner_join(dados, PMB, by ="FCC")
+dim(dados)[1]
+
+```
+
+
+Abaixo temos o número de combinações unicas de GGREM
+
+```{r, echo=FALSE}
+
+sum( cadastro$ggrem %in% matches$GGREM )
+
+```
+
+# Quantidade de matches 
+
+```{r, echo=FALSE}
+mytheme_ <- theme(
+  # panel.background = element_blank(),
+  axis.title.x = element_blank(),
+  axis.text.x = element_blank(), axis.line.x = element_blank(),
+  axis.ticks.x = element_blank())
+
+```
+
+
+```{r, echo=FALSE}
+
+summary <- ddply(dados,.(LAB),summarise,freq=length(LAB))
+summary <- arrange(summary, desc(freq))
+g <- ggplot(summary[1:20,], aes(x=reorder(LAB, -freq), y = freq, tooltip = LAB )) + geom_bar_interactive(stat = "identity")+ xlab("") + ggtitle(" por laboratorio")
+
+ggiraph(code = print(g+mytheme_))
+
+```
+
+```{r, echo=FALSE}
+
+summary <- ddply(dados,.(PROD.1),summarise,freq=length(PROD.1))
+summary <- arrange(summary, desc(freq))
+g <- ggplot(summary[1:20,], aes(x=reorder(PROD.1,-freq), y = freq, tooltip = PROD.1)) + geom_bar_interactive(stat = "identity")+ xlab("")+ ggtitle("por produto")
+
+ggiraph(code = print(g+mytheme_))
+
+```
+
+
+```{r, echo=FALSE}
+
+ggplot(dados, aes(x=reorder(Tarja,Tarja,
+                     function(x)-length(x)))) + geom_bar()+ xlab("")+ ggtitle("por tarja")
+
+```
+
+
+```{r, echo=FALSE}
+
+ggplot(dados, aes(x=reorder(TIPO_PRODUTO,TIPO_PRODUTO,
+                     function(x)-length(x)))) + geom_bar()+ xlab("") + ggtitle("por Tipo do produto")
+
+```
+
+```{r, echo=FALSE}
+
+ggplot(dados, aes(x=reorder(FF,FF,
+                     function(x)-length(x)))) + geom_bar()+ xlab("") + ggtitle("por fórmula")
+
+```
+
+
+```{r, echo=FALSE}
+
+ggplot(dados, aes(x=reorder(REGIME_PRECO,REGIME_PRECO,
+                     function(x)-length(x)))) + geom_bar() + xlab("") + ggtitle("por regime de preço")
+
+```
+
+```{r, echo=FALSE}
+
+boxplot(log(dados$pf18), main="Boxplot pf18")
+
+```
+
+## Analise pelos dados PMB
+
+```{r, echo=FALSE}
+
+summary <- ddply(dados,.(lab),summarise,freq=length(lab))
+summary <- arrange(summary, desc(freq))
+g <- ggplot(summary[1:20,], aes(x=reorder(lab, -freq), y = freq, tooltip = lab )) + geom_bar_interactive(stat = "identity")+ xlab("")+ ggtitle("por laboratorio")
+
+ggiraph(code = print(g+mytheme_))
+
+```
+
+```{r, echo=FALSE}
+
+summary <- ddply(dados,.(prod),summarise,freq=length(prod))
+summary <- arrange(summary, desc(freq))
+g <- ggplot(summary[1:20,], aes(x=reorder(prod,-freq), y = freq, tooltip = prod)) + geom_bar_interactive(stat = "identity")+ xlab("")+ ggtitle("por produto")
+
+ggiraph(code = print(g+mytheme_))
+
+```
+
+
+
+```{r, echo=FALSE}
+
+summary <- ddply(dados,.(CT.y),summarise,freq=length(CT.y))
+summary <- arrange(summary, desc(freq))
+g <- ggplot(summary[1:20,], aes(x=reorder(CT.y,-freq), y = freq, tooltip = CT.y)) + geom_bar_interactive(stat = "identity")+ xlab("")+ ggtitle("por classe")
+
+ggiraph(code = print(g+mytheme_))
+
+```
+
+```{r, echo=FALSE}
+# 
+# ggplot(dados, aes(x=reorder(ETICO, EITCO,
+#                      function(x)-length(x)))) + geom_bar()+ xlab("")
+
+```
+
+
+```{r, echo=FALSE}
+
+ggplot(dados, aes(x=reorder(REFERENCIA, REFERENCIA,
+                     function(x)-length(x)))) + geom_bar() + xlab("")+ ggtitle("por tipo do produto")
+
+```
+
+```{r, echo=FALSE}
+
+boxplot(log(as.numeric(dados$FAT_2015_02)+0.001), main = "Boxplot Faturamento 2015-02")
+
+```
+
+## Box plot do log da diferença entre PF18 e FAT 2015/02
+
+
+```{r, echo=FALSE, warning=FALSE}
+ p <- log(dados$pf18 - as.numeric(dados$FAT_2015_02)+0.001)
+ boxplot(p, main = "Boxplot do log das diferenças de preço")
+
+```
+
+
