@@ -26,6 +26,7 @@ if __name__ == '__main__':
 
     #pre_processing_table("PMB_2015_02_FORMATADA.XLS","PMB", 5,3,2,20)
     pre_processing_table("xls_conformidade_gov_site_2015_02_20_FORMATADA.xls","SAMMED", 9,8,5,6)
+    #pre_processing_table("dados cadastrais sammed.xls","SAMMED", 9,8,5,6)
 
     #Search drug macthes by drugs' names
     search_drugs_names_matches(SOURCE_PMB, SOURCE_SAMMED)
