@@ -59,7 +59,7 @@ def search_drugs_names_matches(source1, source2):
 
                     print("Trying to find matches for files... " + filename)
                     #Call find_possible_matches to search drugs' matches by drug names
-                    find_possible_matches(drugs1, drugs2)
+                    find_possible_matches(drugs1, source1, drugs2, source2)
                     print("Process finished for files... " + filename)
 
     #Comparing drugs in folder no_matches with all_labs
@@ -145,7 +145,7 @@ def search_drugs_names_matches(source1, source2):
 
 
 
-def find_possible_matches(drugs1, drugs2):
+def find_possible_matches(drugs1, source1, drugs2, source2):
     """ Search drugs' matches comparing drugs' names"""
     matches = []
     no_matches = {}
@@ -201,9 +201,9 @@ def find_possible_matches(drugs1, drugs2):
     print(str(len(matches)) + " matches found.")
 
     # Store no matches and macthes quantities
-    with open(os.path.join("log", 'no_matches_stats.csv'), 'a') as stats_file:
+    with open(os.path.join("log", 'no_matches_stats_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as stats_file:
         stats_file.write("{}\n".format(len(no_matches.values())))
-    with open(os.path.join("log", 'matches_stats.csv'), 'a') as stats_file:
+    with open(os.path.join("log", 'matches_stats_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as stats_file:
         stats_file.write("{}\n".format(len(matches)))
 
     #Store attributes of drugs that didnt match by name
@@ -218,7 +218,7 @@ def find_possible_matches(drugs1, drugs2):
     print("No matches saved.")
 
     #Store attributes of drugs that matched by name
-    with open(os.path.join("matches", 'matches.csv'), 'a') as matches_file:
+    with open(os.path.join("matches", 'matches_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as matches_file:
         for match in matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
@@ -227,11 +227,11 @@ def find_possible_matches(drugs1, drugs2):
 
     print("Matches saved.")
 
-def search_drugs_presentation_matches():
+def search_drugs_presentation_matches(source1, source2):
     """ Search drugs' matches comparing drugs' presentation description"""
 
     #Open and read file that contais drugs matched by name
-    matches_file = open(os.path.join( "matches", "matches.csv"), 'r')
+    matches_file = open(os.path.join( "matches", 'matches_'+ source1 + '_'+ source2 + '_'+'.csv'), 'r')
     possible_matches = []
     line = matches_file.readline()
     while(line != ''):
@@ -260,7 +260,7 @@ def search_drugs_presentation_matches():
             print(match)
 
     #Store attributes of drugs that matched by presentation description
-    with open(os.path.join("matches", 'matches_pres.csv'), 'a') as matches_file:
+    with open(os.path.join("matches", 'matches_pres_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as matches_file:
         for match in matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
@@ -269,7 +269,7 @@ def search_drugs_presentation_matches():
     print("Matches by Pres saved.")
 
     #Store attributes of drugs that didnt match by presentation description
-    with open(os.path.join("log", 'no_matches_pres.csv'), 'a') as no_matches_file:
+    with open(os.path.join("log", 'no_matches_pres_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as no_matches_file:
         for match in no_matches:
             last_item = len(match) - 1
             for item in match[:last_item]:

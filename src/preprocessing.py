@@ -91,7 +91,36 @@ def pre_processing_table(table_name, table_given_name, column_pres, column_prod,
             prod_initial_file.write("{}; {}; {}; {}; {}; {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,lab_name))
     print("Table Finished.")
 
+def pre_processing_CATMAT_table(table_name, table_given_name, column_pres, column_prod, column_unit, column_vol, column_code):
+    """ Split CATMAT table in csv files by drug name initial and processes atributtes to eliminate accent and remove stopwords"""
+    print("Start Processing... " + table_name)
+    df_table = pd.read_excel(os.path.join("raw", table_name))
 
+    pres = column_pres-1
+    prod = column_prod-1
+    unit = column_unit-1
+    vol = column_vol-1
+    code = column_code-1
+
+    table_dir_name = os.path.join("data", table_given_name)
+
+    if not os.path.exists(table_dir_name):
+        os.makedirs(table_dir_name)
+
+    for index in range(len(df_table)):
+
+        prod_name = df_table.iloc[index,prod]
+        prod_name_formatted = re.sub("[^\w]", " ", prod_name)
+        prod_name_formatted = ' '.join([unidecode(word) for word in prod_name_formatted.split() if word not in STOPWORDS]).upper()
+        prod_name_complete = search_in_dcb(prod_name_formatted)
+        prod_initial = prod_name_formatted[0]
+        prod_pres = unidecode(re.sub(",", ".", df_table.iloc[index,pres]))
+        prod_unit = df_table.iloc[index,unit]
+        prod_vol = unidecode(re.sub(",", ".", str(df_table.iloc[index,vol])))
+
+        with open(os.path.join(table_dir_name, prod_initial + '.csv'), 'a') as prod_initial_file:
+            prod_initial_file.write("{}; {}; {}; {}; {}; {}; {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,prod_unit, prod_vol))
+    print("Table Finished.")
 
 # def pre_processing_dcb_table():
 #     print("Start Processing DCB... ")

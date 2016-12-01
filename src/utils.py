@@ -5,6 +5,7 @@ import re
 ##############################################################################################
 
 EMPTY_NAME = 0
+NO_LAB_COLUMN = 0
 NO_ACRONYMN = "NO_ACR"
 STOPWORDS = ['COM', 'SEM', 'DE', 'DA', 'MG']
 NOT_FOUND = "NOT FOUND"
