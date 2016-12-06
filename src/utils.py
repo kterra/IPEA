@@ -21,7 +21,7 @@ PROD_VOL_INDEX = 7 #only CATMAT
 
 
 
-PM_PROD_PRES_INDEX_1 = 3
+PM_PROD_PRES_INDEX_1= 3
 PM_PROD_PRES_INDEX_2 = 8
 
 ##############################################################################################
@@ -108,9 +108,11 @@ def any_abbrev(word1, word2):
 #################### Used to identify patterns in drugs' presentation description ####################
 
 def check_digits_pattern(drug_pres):
-    regex = r"\s?(\d+)\s?M?G|" +\
-    r"\s?(\d+\.\d*)\s?MG?L?/G?L?|" +\
-    r"\s?(\d+\.\d*)\s?M?G|" +\
+    regex = r"\s?(\d+)\s?M?C?G|" +\
+    r"\s?(\d+\.?\d*?)\s?MG?L?/G?L?|" +\
+    r"\s?(\d+\.\d*)\s?M?C?G|" +\
+    r"\s?(\d+\.\d*)\s?M?L|" +\
+    r"\s?(\d+\.\d*)\s?[DOSE(S)]|" +\
     r"x?X?\s?(\d+)\s?M?G|" + \
     r"x?X?\s?(\d+)\s?M?L|" +\
     r"CT\s?C?/?\s?(\d+)|" +\
@@ -123,15 +125,14 @@ def check_digits_pattern(drug_pres):
     r"\s?(\d+)"
 
     pms = re.findall(regex, drug_pres, flags=re.IGNORECASE)
-    #print(med_pres)
+    #print(drug_pres)
     results = []
-    units = []
 
     item1 = None
-    item5 = None
-    item6 = None
     item7 = None
     item8 = None
+    item9 = None
+    item10 = None
     for ix in range(len(pms)):
         item = pms[ix]
         #print(item)
@@ -140,46 +141,52 @@ def check_digits_pattern(drug_pres):
             results.append(item[0])
         if item[2]:
             results.append('{0:g}'.format(float(item[2])))
+        if item[3]:
+            results.append('{0:g}'.format(float(item[3])))
+        if item[4]:
+            results.append('{0:g}'.format(float(item[4])))
         if item[1]:
             item1 = item[1]
-        if item[3]:
-            results.append(item[3])
-        if item[4]:
-            results.append(item[4])
         if item[5]:
-            item5 = item[5]
+            results.append(item[5])
         if item[6]:
-            item6 = item[6]
+            results.append(item[6])
         if item[7]:
             item7 = item[7]
         if item[8]:
             item8 = item[8]
         if item[9]:
-            results.append(item[9])
+            item9 = item[9]
+        if item[10]:
+            item10 = item[10]
+        if item[11]:
+            results.append(item[11])
 
     if item1:
-        if item8:
-            results.append('{0:g}'.format(float(item1)*int(item8)))
+        if item10:
+            results.append('{0:g}'.format(float(item1)*int(item10)))
         else:
             results.append(item1)
     else:
-        if item6:
-            if item7:
-                results.append(str(int(item6)*int(item7)))
+        if item8:
+            if item9:
+                results.append(str(int(item8)*int(item9)))
             else:
-                results.append(item6)
-        else:
-            if item7:
-                results.append(item7)
-
-        if item5:
-            if item8:
-                results.append(str(int(item5)*int(item8)))
-            else:
-                results.append(item5)
-        else:
-            if item8:
                 results.append(item8)
+        else:
+            if item9:
+                results.append(item9)
+
+        if item7:
+            if item10:
+                results.append(str(int(item7)*int(item10)))
+            else:
+                results.append(item7)
+        else:
+            if item8:
+                results.append(item9)
+
+
 
     #print(sorted(results))
     return sorted(results)

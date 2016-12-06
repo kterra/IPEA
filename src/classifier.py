@@ -78,6 +78,7 @@ def get_drugs_in_files(source1, source1_path, files_src1, source2, source2_path,
 
                 #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
                 drugs1 = list(set(map(tuple, drugs1)))
+                #print(drugs1)
                 drugs2 = list(set(map(tuple, drugs2)))
                 print("Trying to find matches for files... " + filename)
                 #Call find_possible_matches to search drugs' matches by drug names
@@ -100,16 +101,16 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
             drug1_complete_name = drug[PROD_NAME_COMPLETE_INDEX]
             drug1_pres =  re.sub("\n", "",drug[PROD_PRES_INDEX])
             drug1_lab = re.sub("\n", "", drug[PROD_LAB_INDEX])
-            if len(drug) > 6:
-                drug1_unit = drug[PROD_UNIT_INDEX]
-                drug1_vol = re.sub("\n", "", drug[PROD_VOL_INDEX])
+            # if len(drug) > 6:
+            #     drug1_unit = drug[PROD_UNIT_INDEX]
+            #     drug1_vol = re.sub("\n", "", drug[PROD_VOL_INDEX])
 
             for possible_match in drugs2:
                 matched = False
-                if len(drug) > 6:
-                    current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab,drug1_unit,drug1_vol]
-                else:
-                    current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab]
+                # if len(drug) > 6:
+                #     current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab,drug1_unit,drug1_vol]
+                # else:
+                current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab]
 
 
                 #Get drug's attributes for possible match drug
@@ -119,29 +120,23 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
                     drug2_complete_name = possible_match[PROD_NAME_COMPLETE_INDEX]
                     drug2_pres =  re.sub("\n", "",possible_match[PROD_PRES_INDEX])
                     drug2_lab = re.sub("\n", "", possible_match[PROD_LAB_INDEX])
-                    if len(possible_match) > 6:
-                        drug2_unit = possible_match[PROD_UNIT_INDEX]
-                        drug2_vol = re.sub("\n", "", possible_match[PROD_VOL_INDEX])
+                    # if len(possible_match) > 6:
+                    #     drug2_unit = possible_match[PROD_UNIT_INDEX]
+                    #     drug2_vol = re.sub("\n", "", possible_match[PROD_VOL_INDEX])
                 except:
                     print(possible_match)
                 #Check macth by drugs' names by calling any_abbrev utility method
                 if NOT_FOUND in drug1_complete_name or NOT_FOUND in drug2_complete_name:
-                    print("foi")
                     if any_abbrev(drug1_name, drug2_name):
-                        print("ok")
-                        if len(drug) > 6:
-                            current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab,drug2_unit,drug2_vol]
-                        else:
-                            current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab]
+                        # if len(drug) > 6:
+                        #     current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab,drug2_unit,drug2_vol]
+                        # else:
+                        current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab]
                         matched = True
 
                 else:
-                    print("foi2")
                     #Check macth by drugs' names by  comparing if drugs' names are identical
                     if drug1_complete_name ==  drug2_complete_name:
-                        print("ok2")
-                        print(drug1_complete_name)
-                        print(drug2_complete_name)
                         print("complete names verifyied.")
                         current_matches = current_matches + list(possible_match)
                         matched = True
@@ -214,15 +209,19 @@ def search_drugs_presentation_matches(source1, source2):
             drug1_pres_units = check_digits_pattern(drug1_pres)
             drug2_pres = match[PM_PROD_PRES_INDEX_2]
             drug2_pres_units = check_digits_pattern(drug2_pres)
+            # print(match)
+            # print(drug1_pres_units)
+            # print(drug2_pres_units)
             if compare_lists(drug1_pres_units, drug2_pres_units):
                 matches.append(match)
             else:
                 no_matches.append(match)
-        except:
+        except Exception as error:
+            print(error)
             print(match)
 
     #Store attributes of drugs that matched by presentation description
-    with open(os.path.join("matches", 'matches_pres_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as matches_file:
+    with open(os.path.join("matches", 'matches_pres_'+ source1 + '_'+ source2 +'.csv'), 'a') as matches_file:
         for match in matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
@@ -231,7 +230,7 @@ def search_drugs_presentation_matches(source1, source2):
     print("Matches by Pres saved.")
 
     #Store attributes of drugs that didnt match by presentation description
-    with open(os.path.join("log", 'no_matches_pres_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as no_matches_file:
+    with open(os.path.join("log", 'no_matches_pres_'+ source1 + '_'+ source2 +'.csv'), 'a') as no_matches_file:
         for match in no_matches:
             last_item = len(match) - 1
             for item in match[:last_item]:

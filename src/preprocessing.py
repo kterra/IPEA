@@ -117,9 +117,13 @@ def pre_processing_CATMAT_table(table_name, table_given_name, column_pres, colum
         prod_pres = unidecode(re.sub(",", ".", df_table.iloc[index,pres]))
         prod_unit = df_table.iloc[index,unit]
         prod_vol = unidecode(re.sub(",", ".", str(df_table.iloc[index,vol])))
+        if prod_unit:
+            prod_pres = prod_pres + " " + prod_unit
+        if prod_vol and not prod_vol == "0":
+            prod_pres = prod_pres + " " + prod_vol
 
         with open(os.path.join(table_dir_name, prod_initial + '.csv'), 'a') as prod_initial_file:
-            prod_initial_file.write("{}; {}; {}; {}; {}; {}; {}; {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres,NO_ACRONYMN, prod_unit, prod_vol))
+            prod_initial_file.write("{}; {}; {}; {}; {}; {}\n".format(df_table.iloc[index,code], prod_name, prod_name_formatted, prod_name_complete, prod_pres ,NO_ACRONYMN))
     print("Table Finished.")
 
 # def pre_processing_dcb_table():
