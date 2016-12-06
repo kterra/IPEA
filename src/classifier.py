@@ -14,135 +14,75 @@ def search_drugs_names_matches(source1, source2):
     source2_path = os.path.join("data", source2)
 
     #Get list of labs' dirs in sources' dirs
-    labs_src1 = os.listdir(source1_path)[1:]
-    labs_src2 = os.listdir(source2_path)[1:]
+    labs_src1 = [f.path for f in os.scandir(source1_path) if f.is_dir() ]
+    labs_src2 = [f.path for f in os.scandir(source2_path) if f.is_dir() ]
+    print(labs_src1)
+    print(len(labs_src1))
+    print(labs_src2)
+    print(len(labs_src2))
 
 
     print("Start reading files...")
     #Comparing only folders of same labs in each source
-    for lab in labs_src1:
-        if lab in labs_src2:
-            print("Start reading lab dir... " + lab)
-            #Get list of files in labs' dirs
-            files_src1 = os.listdir(os.path.join(source1_path, lab))
-            files_src2 = os.listdir(os.path.join(source2_path, lab))
+    if len(labs_src1) > 0:
+        for lab in labs_src1:
+            if len(labs_src2) > 0:
+                if lab in labs_src2:
+                    print("Start reading lab dir... " + lab)
+                    #Get list of files in labs' dirs
+                    files_src1 = os.listdir(lab)
+                    files_src2 = os.listdir(lab)
+                    get_drugs_in_files(source1,lab, files_src1,source2, lab,files_src2)
+            else:
+                files_src1 = os.listdir(lab)
+                files_src2 = os.listdir(source2_path)
+                get_drugs_in_files(source1,lab, files_src1,source2, source2_path,files_src2)
+    else:
+        print("Start reading CATMAT dir... ")
+        files_src1 = os.listdir(source1_path)
+        if len(labs_src2) > 0:
+            for lab in labs_src2:
+                files_src2 = os.listdir(lab)
+                get_drugs_in_files(source1,source1_path, files_src1,source2, lab,files_src2)
+        else:
+            files_src2 = os.listdir(source2_path)
+            get_drugs_in_files(source1, source1_path, files_src1, source2, source2_path,files_src2)
 
-            for filename in files_src1:
-                if filename in files_src2:
-                    print("Start reading files... " + filename)
-                    #Open files of corresponding lab
-                    f1 = open(os.path.join(os.path.join(source1_path, lab), filename), 'r',encoding='iso-8859-1')
-                    f2 = open(os.path.join(os.path.join(source2_path, lab), filename), 'r',encoding='iso-8859-1')
 
-                    #Read file 1 into list drugs1
-                    drugs1 = []
+def get_drugs_in_files(source1, source1_path, files_src1, source2, source2_path,files_src2):
+        for filename in files_src1:
+            if filename in files_src2:
+                print("Start reading files... " + filename)
+                #Open files of corresponding lab
+                f1 = open(os.path.join(source1_path, filename), 'r',encoding='iso-8859-1')
+                f2 = open(os.path.join(source2_path, filename), 'r',encoding='iso-8859-1')
+
+                #Read file 1 into list drugs1
+                drugs1 = []
+                line = f1.readline()
+                while(line != ''):
+                    drugs1.append(line.split(';'))
                     line = f1.readline()
-                    while(line != ''):
-                        drugs1.append(line.split(';'))
-                        line = f1.readline()
 
-                    #Read file 2 into list drugs2
-                    drugs2 = []
+                #Read file 2 into list drugs2
+                drugs2 = []
+                line = f2.readline()
+                while(line != ''):
+                    drugs2.append(line.split(';'))
                     line = f2.readline()
-                    while(line != ''):
-                        drugs2.append(line.split(';'))
-                        line = f2.readline()
 
-                    #Close files
-                    f1.close()
-                    f2.close()
-                    print("Files read.")
+                #Close files
+                f1.close()
+                f2.close()
+                print("Files read.")
 
-                    #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
-                    drugs1 = list(set(map(tuple, drugs1)))
-                    drugs2 = list(set(map(tuple, drugs2)))
-
-                    print("Trying to find matches for files... " + filename)
-                    #Call find_possible_matches to search drugs' matches by drug names
-                    find_possible_matches(drugs1, source1, drugs2, source2)
-                    print("Process finished for files... " + filename)
-
-    #Comparing drugs in folder no_matches with all_labs
-    # for lab in labs_src2:
-    #     files_src1 = os.listdir("no_matches")
-    #     files_src2 = os.listdir(os.path.join(source2_path, lab))
-    #
-    #     for filename in files_src1:
-    #         if filename in files_src2:
-    #             print("Start reading files... " + filename)
-    #             #Open files of corresponding lab
-    #             f1 = open(os.path.join("no_matches", filename), 'r',encoding='iso-8859-1')
-    #             f2 = open(os.path.join(os.path.join(source2_path, lab), filename), 'r',encoding='iso-8859-1')
-    #
-    #             #Read file 1 into list drugs1
-    #             drugs1 = []
-    #             line = f1.readline()
-    #             while(line != ''):
-    #                 drugs1.append(line.split(','))
-    #                 line = f1.readline()
-    #
-    #             #Read file 2 into list drugs2
-    #             drugs2 = []
-    #             line = f2.readline()
-    #             while(line != ''):
-    #                 drugs2.append(line.split(','))
-    #                 line = f2.readline()
-    #
-    #             #Close files
-    #             f1.close()
-    #             f2.close()
-    #             print("Files read.")
-    #
-    #             #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
-    #             drugs1 = list(set(map(tuple, drugs1)))
-    #             drugs2 = list(set(map(tuple, drugs2)))
-    #
-    #             print("Trying to find matches for files... " + filename)
-    #             #Call find_possible_matches to search drugs' matches by drug names
-    #             find_possible_matches(drugs1, drugs2)
-    #             print("Process finished for files... " + filename)
-
-    # #Comparing drugs in folder NO_ACR in source2(SAMMED) with all labs in source1(PMB)
-    # for lab in labs_src1:
-    #     files_src1 = os.listdir(os.path.join(source1_path, lab))
-    #     files_src2 = os.listdir(os.path.join(source2_path, NO_ACRONYMN))
-    #
-    #     for filename in files_src1:
-    #         if filename in files_src2:
-    #             print("Start reading files... " + filename)
-    #             #Open files of corresponding lab
-    #             f1 = open(os.path.join(os.path.join(source1_path, lab), filename), 'r',encoding='iso-8859-1')
-    #             f2 = open(os.path.join(os.path.join(source2_path, NO_ACRONYMN), filename), 'r',encoding='iso-8859-1')
-    #
-    #             #Read file 1 into list drugs1
-    #             drugs1 = []
-    #             line = f1.readline()
-    #             while(line != ''):
-    #                 drugs1.append(line.split(';'))
-    #                 line = f1.readline()
-    #
-    #             #Read file 2 into list drugs2
-    #             drugs2 = []
-    #             line = f2.readline()
-    #             while(line != ''):
-    #                 drugs2.append(line.split(';'))
-    #                 line = f2.readline()
-    #
-    #             #Close files
-    #             f1.close()
-    #             f2.close()
-    #             print("Files read.")
-    #
-    #             #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
-    #             drugs1 = list(set(map(tuple, drugs1)))
-    #             drugs2 = list(set(map(tuple, drugs2)))
-    #
-    #             print("Trying to find matches for files... " + filename)
-    #             #Call find_possible_matches to search drugs' matches by drug names
-    #             find_possible_matches(drugs1, drugs2)
-    #             print("Process finished for files... " + filename)
-
-
+                #Tranforms list of lists in list of tuples then tranform list in set to eliminate duplicateds and returns to list again
+                drugs1 = list(set(map(tuple, drugs1)))
+                drugs2 = list(set(map(tuple, drugs2)))
+                print("Trying to find matches for files... " + filename)
+                #Call find_possible_matches to search drugs' matches by drug names
+                find_possible_matches(drugs1, source1, drugs2, source2)
+                print("Process finished for files... " + filename)
 
 
 def find_possible_matches(drugs1, source1, drugs2, source2):
@@ -151,6 +91,7 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
     no_matches = {}
 
     for drug in drugs1:
+
         try:
             #Get drug's attributes
             drug1_code = drug[PROD_CODE_INDEX]
@@ -159,9 +100,17 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
             drug1_complete_name = drug[PROD_NAME_COMPLETE_INDEX]
             drug1_pres =  re.sub("\n", "",drug[PROD_PRES_INDEX])
             drug1_lab = re.sub("\n", "", drug[PROD_LAB_INDEX])
+            if len(drug) > 6:
+                drug1_unit = drug[PROD_UNIT_INDEX]
+                drug1_vol = re.sub("\n", "", drug[PROD_VOL_INDEX])
 
             for possible_match in drugs2:
-                current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab]
+                matched = False
+                if len(drug) > 6:
+                    current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab,drug1_unit,drug1_vol]
+                else:
+                    current_matches = [drug1_code, drug1_name, drug1_complete_name, drug1_pres, drug1_lab]
+
 
                 #Get drug's attributes for possible match drug
                 try:
@@ -170,22 +119,34 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
                     drug2_complete_name = possible_match[PROD_NAME_COMPLETE_INDEX]
                     drug2_pres =  re.sub("\n", "",possible_match[PROD_PRES_INDEX])
                     drug2_lab = re.sub("\n", "", possible_match[PROD_LAB_INDEX])
+                    if len(possible_match) > 6:
+                        drug2_unit = possible_match[PROD_UNIT_INDEX]
+                        drug2_vol = re.sub("\n", "", possible_match[PROD_VOL_INDEX])
                 except:
                     print(possible_match)
                 #Check macth by drugs' names by calling any_abbrev utility method
-                if drug1_complete_name != NOT_FOUND and drug2_complete_name != NOT_FOUND:
+                if NOT_FOUND in drug1_complete_name or NOT_FOUND in drug2_complete_name:
+                    print("foi")
                     if any_abbrev(drug1_name, drug2_name):
-                        current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab]
+                        print("ok")
+                        if len(drug) > 6:
+                            current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab,drug2_unit,drug2_vol]
+                        else:
+                            current_matches = current_matches + [drug2_code, drug2_name, drug2_complete_name ,drug2_pres, drug2_lab]
+                        matched = True
 
                 else:
+                    print("foi2")
                     #Check macth by drugs' names by  comparing if drugs' names are identical
                     if drug1_complete_name ==  drug2_complete_name:
+                        print("ok2")
                         print(drug1_complete_name)
                         print(drug2_complete_name)
                         print("complete names verifyied.")
                         current_matches = current_matches + list(possible_match)
+                        matched = True
 
-                if len(current_matches) > len(drug):
+                if matched:
                     matches.append(current_matches)
                 else:
                     if drug1_initial in no_matches.keys():
@@ -196,6 +157,7 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
                         no_matches[drug1_initial] = [drug]
         except:
             print(drug)
+
 
     print( str(len(no_matches.values())) + " no matches found.")
     print(str(len(matches)) + " matches found.")
@@ -218,7 +180,7 @@ def find_possible_matches(drugs1, source1, drugs2, source2):
     print("No matches saved.")
 
     #Store attributes of drugs that matched by name
-    with open(os.path.join("matches", 'matches_'+ source1 + '_'+ source2 + '_'+'.csv'), 'a') as matches_file:
+    with open(os.path.join("matches", 'matches_'+ source1 + '_'+ source2 +'.csv'), 'a') as matches_file:
         for match in matches:
             last_item = len(match) - 1
             for item in match[:last_item]:
@@ -231,7 +193,7 @@ def search_drugs_presentation_matches(source1, source2):
     """ Search drugs' matches comparing drugs' presentation description"""
 
     #Open and read file that contais drugs matched by name
-    matches_file = open(os.path.join( "matches", 'matches_'+ source1 + '_'+ source2 + '_'+'.csv'), 'r')
+    matches_file = open(os.path.join( "matches", 'matches_'+ source1 + '_'+ source2 +'.csv'), 'r')
     possible_matches = []
     line = matches_file.readline()
     while(line != ''):

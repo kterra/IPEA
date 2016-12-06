@@ -17,7 +17,7 @@ if __name__ == '__main__':
     print("Start...")
 
     #Processing DCB table to get complete products names
-    load_dcb_table_into_memory()
+    #load_dcb_table_into_memory()
 
     #Pre processing of labs tables
     #enter columns: apresentaccao, produto, lab, codigo
@@ -34,15 +34,15 @@ if __name__ == '__main__':
     #pre_processing_table("xls_conformidade_gov_site_2014_12_22_FORMATADA.xls",SOURCE_SAMMED_2014, 8,7,4,5)
 
     #enter columns: apresentaccao, produto, unit, vol, codigo
-    pre_processing_CATMAT_table("LISTA DE CATMATS MEDICAMENTOS 2014_FORMATADA.xlsx",SOURCE_CATMAT_2014, 2,3,4,5,1)
+    #pre_processing_CATMAT_table("LISTA DE CATMATS MEDICAMENTOS 2014_FORMATADA.xlsx",SOURCE_CATMAT_2014, 2,3,4,5,1)
 
 
     #Search drug macthes by drugs' names
 
-    #search_drugs_names_matches(SOURCE_PMB_2015, SOURCE_SAMMED_2015)
+    #search_drugs_names_matches(SOURCE_CATMAT_2014, SOURCE_SAMMED_2014)
 
     #Search drug macthes by presentation description
-    #search_drugs_presentation_matches(SOURCE_PMB_2015, SOURCE_SAMMED_2015)
+    search_drugs_presentation_matches(SOURCE_CATMAT_2014, SOURCE_SAMMED_2014)
 
 
     print("Finished.")

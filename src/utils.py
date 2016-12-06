@@ -11,10 +11,15 @@ STOPWORDS = ['COM', 'SEM', 'DE', 'DA', 'MG']
 NOT_FOUND = "NOT FOUND"
 
 PROD_CODE_INDEX = 0
+PROD_NAME_INDEX = 1
 PROD_NAME_FORMATTED_INDEX = 2
 PROD_NAME_COMPLETE_INDEX = 3
 PROD_PRES_INDEX = 4
-PROD_LAB_INDEX = 5
+PROD_LAB_INDEX = 5 #empty for CATMAT
+PROD_UNIT_INDEX = 6 #only CATMAT
+PROD_VOL_INDEX = 7 #only CATMAT
+
+
 
 PM_PROD_PRES_INDEX_1 = 3
 PM_PROD_PRES_INDEX_2 = 8
@@ -76,7 +81,7 @@ def is_abbrev(abbrev, text):
         return True
     if abbrev and not text:
         return False
-    if len(abbrev.split()) != len(text.split()):
+    if len(abbrev.split()) != len(words):
         return False
     if abbrev[0]!=text[0]:
         return False
